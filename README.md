@@ -12,15 +12,21 @@ This is our standard Next.js project structure and setup guidelines. Follow thes
 2. **Styling**:
    - Use [Tailwind CSS](https://tailwindcss.com/) for styling
    - Use [ShadCn UI components](https://ui.shadcn.com/)
+   - For icons, use [React-Icons](https://react-icons.github.io/react-icons/), [Lucide-Icons](https://lucide.dev/icons/), [Huge-Icons](https://hugeicons.com/icons), [Hero-Icons](https://heroicons.com/)
+   - Implement animations with [Framer-Motion](https://www.framer.com/motion/)
 
 3. **Performance Optimization**:
    - Dynamically import components to improve performance through lazy loading
    - Use server-side rendering when possible for better performance
    - Use Next.js Image component for optimized images
+   - Maintain type-safety wherever possible.
 
 4. **Forms and Validation**:
    - Use [React Hook Form](https://www.react-hook-form.com/) for form handling
    - Use [Zod](https://zod.dev/) for form validations
+
+5. **Advanced Tables**:
+   - Utilize [TanStack Table](https://tanstack.com/table/latest) for advanced table functionality.
 
 5. **State Management**:
    - Use [Zustand](https://github.com/pmndrs/zustand) for global state management
@@ -29,6 +35,7 @@ This is our standard Next.js project structure and setup guidelines. Follow thes
 6. **Environment Variables**:
    - Use `.env.local` for local environment variables
    - Never commit `.env.local` to version control
+   - For more extensive environment variables and type-safety, use [t3-env](https://env.t3.gg/)
 
 ## Getting Started
 
