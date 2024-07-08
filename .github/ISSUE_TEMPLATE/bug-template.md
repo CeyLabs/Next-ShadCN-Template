@@ -13,7 +13,7 @@ assignees: ''
 ## Expected Behavior
 
 
-## Screenshots or Screen Recordings
+## Jam.dev link
 
 
 ## Steps to reproduce
