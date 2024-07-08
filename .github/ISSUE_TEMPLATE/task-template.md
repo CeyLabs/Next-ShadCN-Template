@@ -4,6 +4,7 @@ about: Use this to create a task that falls under a user story.
 title: '🎯 Describe the task'
 labels: task
 assignees: ''
+projects: [6]
 
 ---
 
