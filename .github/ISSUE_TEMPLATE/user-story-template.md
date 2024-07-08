@@ -1,5 +1,5 @@
 ---
-name: User Story Template
+name: Create a new User Story
 about: Use this to create a new user story that falls under an epic
 title: "As a USER who PRECONDITIONS, I want to DO_THING so I can ACCOMPLISH_GOAL."
 labels: story

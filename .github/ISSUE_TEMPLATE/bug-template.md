@@ -1,5 +1,5 @@
 ---
-name: Bug Template
+name: File a Bug
 about: Use this to file a bug.
 title: '🐛 Describe the bug'
 labels: bug

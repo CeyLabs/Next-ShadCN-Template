@@ -1,5 +1,5 @@
 ---
-name: Epic Template
+name: Create a new Epic
 about: For high-level, related sets of features and journeys.
 title: "☄️ Describe the Epic"
 labels: epic

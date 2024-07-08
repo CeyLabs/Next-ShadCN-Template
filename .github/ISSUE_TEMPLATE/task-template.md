@@ -1,5 +1,5 @@
 ---
-name: Task Template
+name: Create a new Task
 about: Use this to create a task that falls under a user story.
 title: '🎯 Describe the task'
 labels: task
