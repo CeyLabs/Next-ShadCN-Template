@@ -75,8 +75,8 @@ project-root/
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── hello/
-│   │   │   │   ├── route.ts
+│   │   │   └── hello/
+│   │   │       └── route.ts
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   └── [id]/
