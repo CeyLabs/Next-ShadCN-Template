@@ -74,9 +74,12 @@ Before committing, ensure your code is properly formatted and builds without err
 project-root/
 ├── src/
 │   ├── app/
+│   │   ├── api/
+│   │   │   ├── hello/
+│   │   │   │   ├── route.ts
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
-│   │   └── [...route]/
+│   │   └── [id]/
 │   │       └── page.tsx
 │   ├── components/
 │   │   ├── ui/
