@@ -1,1 +1,1 @@
-# Naxt-ShadCN-Template
+# Next-ShadCN-Template
