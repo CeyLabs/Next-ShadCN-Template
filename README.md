@@ -16,10 +16,10 @@ This is our standard Next.js project structure and setup guidelines. Follow thes
     - Use [ShadCn UI components](https://ui.shadcn.com/)
 
 3. **Performance Optimization**:
-
-    - Dynamically import components to improve performance through lazy loading
-    - Use server-side rendering when possible for better performance
-    - Use Next.js Image component for optimized images
+   - Dynamically import components to improve performance through lazy loading
+   - Use server-side rendering when possible for better performance
+   - Use Next.js Image component for optimized images
+   - Always use `fetchy`, a fetch wrapper function from [@/lib/fetchy](https://github.com/CeyLabs/Next-ShadCN-Template/blob/rr/add-fetch-wrapper/src/lib/fetchy.ts), for making HTTP requests
 
 4. **Forms and Validation**:
 
