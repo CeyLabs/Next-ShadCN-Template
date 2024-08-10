@@ -1,5 +1,5 @@
 /**
- * Fetchy is a utility class for making HTTP requests with built-in error handling.
+ * fetchy is a utility class for making HTTP requests with built-in error handling.
  * It provides methods for common HTTP methods: GET, POST, PUT, and DELETE.
  *
  * Features:
@@ -11,24 +11,24 @@
  * - Supports TypeScript generics for type-safe responses and request bodies.
  *
  * Usage:
- * - `Fetchy.get<T>(url, options)`: Sends a GET request.
- * - `Fetchy.post<T, B>(url, body, options)`: Sends a POST request with a JSON body.
- * - `Fetchy.put<T, B>(url, body, options)`: Sends a PUT request with a JSON body.
- * - `Fetchy.delete<T>(url, options)`: Sends a DELETE request.
+ * - `fetchy.get<T>(url, options)`: Sends a GET request.
+ * - `fetchy.post<T, B>(url, body, options)`: Sends a POST request with a JSON body.
+ * - `fetchy.put<T, B>(url, body, options)`: Sends a PUT request with a JSON body.
+ * - `fetchy.delete<T>(url, options)`: Sends a DELETE request.
  *
  * Options:
  * - You can pass additional fetch options (headers, etc.) through the `options` parameter.
  * - Use `shouldCache: false` in `options` to disable caching.
  *
  * Example:
- * Fetchy.get<UserData>('https://api.example.com/user')
+ * fetchy.get<UserData>('https://api.example.com/user')
  *   .then(data => console.log(data))
  *   .catch(error => console.error(error))
  *   .finally(() => console.log('Request completed'));
  *
  * Note:
  * - The type parameter T is optional. If not provided, the return type defaults to Promise<any>.
- * - You can use these methods without specifying types: Fetchy.get(url)
+ * - You can use these methods without specifying types: fetchy.get(url)
  */
 
 interface FetchOptions extends RequestInit {
@@ -41,7 +41,7 @@ interface ErrorResponse {
 }
 
 class Fetchy {
-    private static async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
+    private async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
         const { shouldCache = true, ...fetchOptions } = options;
 
         const response = await fetch(url, {
@@ -61,11 +61,11 @@ class Fetchy {
         return response.json() as Promise<T>;
     }
 
-    static get<T>(url: string, options: FetchOptions = {}): Promise<T> {
+    get<T>(url: string, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, { ...options, method: "GET" });
     }
 
-    static post<T, B = unknown>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
+    post<T, B = unknown>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, {
             ...options,
             method: "POST",
@@ -73,7 +73,7 @@ class Fetchy {
         });
     }
 
-    static put<T, B = unknown>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
+    put<T, B = unknown>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, {
             ...options,
             method: "PUT",
@@ -81,9 +81,16 @@ class Fetchy {
         });
     }
 
-    static delete<T>(url: string, options: FetchOptions = {}): Promise<T> {
+    delete<T>(url: string, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, { ...options, method: "DELETE" });
     }
 }
 
-export default Fetchy;
+const fetchy = new Fetchy();
+
+export default fetchy as {
+    get<T>(url: string, options?: FetchOptions): Promise<T>;
+    post<T, B = unknown>(url: string, body: B, options?: FetchOptions): Promise<T>;
+    put<T, B = unknown>(url: string, body: B, options?: FetchOptions): Promise<T>;
+    delete<T>(url: string, options?: FetchOptions): Promise<T>;
+};
