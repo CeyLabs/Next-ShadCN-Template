@@ -17,6 +17,7 @@ This is our standard Next.js project structure and setup guidelines. Follow thes
    - Dynamically import components to improve performance through lazy loading
    - Use server-side rendering when possible for better performance
    - Use Next.js Image component for optimized images
+   - Always use `fetchy`, a fetch wrapper function from `@/lib/fetchy`, for making HTTP requests
 
 4. **Forms and Validation**:
    - Use [React Hook Form](https://www.react-hook-form.com/) for form handling
