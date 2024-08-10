@@ -1,56 +1,61 @@
 /**
- * fetchy is a utility class for making HTTP requests with built-in error handling.
+ * Fetchy is a utility class for making HTTP requests with built-in error handling.
  * It provides methods for common HTTP methods: GET, POST, PUT, and DELETE.
  *
  * Features:
  * - Automatically sets 'Content-Type' to 'application/json'.
  * - Automatically parses JSON response.
- * - Supports optional cache control using the `cache` option.
+ * - Supports optional cache control using the `shouldCache` option.
  * - Handles HTTP errors by throwing exceptions with error messages.
  * - Returns a Promise, allowing use of .then(), .catch(), and .finally().
- * - Supports TypeScript generics for type-safe responses.
+ * - Supports TypeScript generics for type-safe responses and request bodies.
  *
  * Usage:
- * - `fetchy.get<T>(url, options)`: Sends a GET request.
- * - `fetchy.post<T>(url, body, options)`: Sends a POST request with a JSON body.
- * - `fetchy.put<T>(url, body, options)`: Sends a PUT request with a JSON body.
- * - `fetchy.delete<T>(url, options)`: Sends a DELETE request.
+ * - `Fetchy.get<T>(url, options)`: Sends a GET request.
+ * - `Fetchy.post<T, B>(url, body, options)`: Sends a POST request with a JSON body.
+ * - `Fetchy.put<T, B>(url, body, options)`: Sends a PUT request with a JSON body.
+ * - `Fetchy.delete<T>(url, options)`: Sends a DELETE request.
  *
  * Options:
  * - You can pass additional fetch options (headers, etc.) through the `options` parameter.
- * - Use `cache: 'no-cache'` in `options` to disable caching.
+ * - Use `shouldCache: false` in `options` to disable caching.
  *
  * Example:
- * fetchy.get<UserData>('https://api.example.com/user')
+ * Fetchy.get<UserData>('https://api.example.com/user')
  *   .then(data => console.log(data))
  *   .catch(error => console.error(error))
  *   .finally(() => console.log('Request completed'));
  *
  * Note:
  * - The type parameter T is optional. If not provided, the return type defaults to Promise<any>.
- * - You can use these methods without specifying a type: fetchy.get(url)
+ * - You can use these methods without specifying types: Fetchy.get(url)
  */
 
 interface FetchOptions extends RequestInit {
-    cache?: "no-cache" | "default";
+    shouldCache?: boolean;
+    headers?: Record<string, string>;
 }
 
-class fetchy {
-    static async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
-        const { cache, ...fetchOptions } = options;
+interface ErrorResponse {
+    message: string;
+}
+
+class Fetchy {
+    private static async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
+        const { shouldCache = true, ...fetchOptions } = options;
 
         const response = await fetch(url, {
             headers: {
                 "Content-Type": "application/json",
                 ...fetchOptions.headers,
             },
-            ...(cache === "no-cache" ? { cache: "no-cache" } : {}),
+            ...(shouldCache ? {} : { cache: "no-cache" }),
             ...fetchOptions,
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || "An error occurred");
+            const error = (await response.json()) as ErrorResponse;
+            throw new Error(error.message || "An error occurred while fetching the data.");
         }
 
         return response.json() as Promise<T>;
@@ -60,7 +65,7 @@ class fetchy {
         return this.request<T>(url, { ...options, method: "GET" });
     }
 
-    static post<T>(url: string, body: any, options: FetchOptions = {}): Promise<T> {
+    static post<T, B = unknown>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, {
             ...options,
             method: "POST",
@@ -68,7 +73,7 @@ class fetchy {
         });
     }
 
-    static put<T>(url: string, body: any, options: FetchOptions = {}): Promise<T> {
+    static put<T, B = unknown>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, {
             ...options,
             method: "PUT",
@@ -81,4 +86,4 @@ class fetchy {
     }
 }
 
-export default fetchy;
+export default Fetchy;
