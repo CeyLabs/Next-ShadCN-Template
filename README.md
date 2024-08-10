@@ -5,30 +5,35 @@ This is our standard Next.js project structure and setup guidelines. Follow thes
 ## Setup Guidelines
 
 1. **Project Structure**:
-   - Only keep Next.js routing files in the `app` directory
-   - Implement dynamic imports for code splitting
-   - Create custom components in `components/`
+
+    - Only keep Next.js routing files in the `app` directory
+    - Implement dynamic imports for code splitting
+    - Create custom components in `components/`
 
 2. **Styling**:
-   - Use [Tailwind CSS](https://tailwindcss.com/) for styling
-   - Use [ShadCn UI components](https://ui.shadcn.com/)
+
+    - Use [Tailwind CSS](https://tailwindcss.com/) for styling
+    - Use [ShadCn UI components](https://ui.shadcn.com/)
 
 3. **Performance Optimization**:
-   - Dynamically import components to improve performance through lazy loading
-   - Use server-side rendering when possible for better performance
-   - Use Next.js Image component for optimized images
+
+    - Dynamically import components to improve performance through lazy loading
+    - Use server-side rendering when possible for better performance
+    - Use Next.js Image component for optimized images
 
 4. **Forms and Validation**:
-   - Use [React Hook Form](https://www.react-hook-form.com/) for form handling
-   - Use [Zod](https://zod.dev/) for form validations
+
+    - Use [React Hook Form](https://www.react-hook-form.com/) for form handling
+    - Use [Zod](https://zod.dev/) for form validations
 
 5. **State Management**:
-   - Use [Zustand](https://github.com/pmndrs/zustand) for global state management
-   - Utilize [TanStack Query](https://tanstack.com/query/latest) for server state management
+
+    - Use [Zustand](https://github.com/pmndrs/zustand) for global state management
+    - Utilize [TanStack Query](https://tanstack.com/query/latest) for server state management
 
 6. **Environment Variables**:
-   - Use `.env.local` for local environment variables
-   - Never commit `.env.local` to version control
+    - Use `.env.local` for local environment variables
+    - Never commit `.env.local` to version control
 
 ## Getting Started
 
@@ -41,25 +46,25 @@ This is our standard Next.js project structure and setup guidelines. Follow thes
 
 Before committing, ensure your code is properly formatted and builds without errors:
 
-   ```bash
-   bun run format
-   bun run build
-   ```
+```bash
+bun run format
+bun run build
+```
 
 ## Use conventional commit messages:
 
-- `feat`: for new features
-- `fix`: for bug fixes
-- `docs`: for documentation changes
-- `style`: for formatting changes
-- `refactor`: for code refactoring
-- `test`: for adding or modifying tests
-- `chore`: for maintenance tasks
+-   `feat`: for new features
+-   `fix`: for bug fixes
+-   `docs`: for documentation changes
+-   `style`: for formatting changes
+-   `refactor`: for code refactoring
+-   `test`: for adding or modifying tests
+-   `chore`: for maintenance tasks
 
 ## Create Pull Requests:
-- Create a new branch for each feature or fix
-- Submit a pull request for review before merging to the main branch
 
+-   Create a new branch for each feature or fix
+-   Submit a pull request for review before merging to the main branch
 
 ## Project Structure
 
