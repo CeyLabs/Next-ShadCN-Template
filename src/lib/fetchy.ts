@@ -32,7 +32,6 @@
  */
 
 interface FetchOptions extends RequestInit {
-    shouldCache?: boolean;
     headers?: Record<string, string>;
 }
 
@@ -42,20 +41,21 @@ interface ErrorResponse {
 
 class Fetchy {
     private async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
-        const { shouldCache = true, ...fetchOptions } = options;
+        const { ...fetchOptions } = options;
 
         const response = await fetch(url, {
             headers: {
                 "Content-Type": "application/json",
                 ...fetchOptions.headers,
             },
-            ...(shouldCache ? {} : { cache: "no-cache" }),
             ...fetchOptions,
         });
 
         if (!response.ok) {
             const error = (await response.json()) as ErrorResponse;
-            throw new Error(error.message || "An error occurred while fetching the data.");
+            throw new Error(error.message || "An error occurred while fetching the data.", {
+                cause: { response },
+            });
         }
 
         return response.json() as Promise<T>;
