@@ -34,6 +34,7 @@
 interface FetchOptions extends RequestInit {
     headers?: Record<string, string>;
     timeout?: number;
+    responseType?: "json" | "text" | "blob" | "arrayBuffer";
 }
 
 interface ErrorResponse {
@@ -41,6 +42,21 @@ interface ErrorResponse {
 }
 
 class Fetchy {
+    private async parseResponse<T>(response: Response, options: FetchOptions): Promise<T> {
+        switch (options.responseType || "json") {
+            case "json":
+                return response.json() as Promise<T>;
+            case "text":
+                return response.text() as Promise<T>;
+            case "blob":
+                return response.blob() as Promise<T>;
+            case "arrayBuffer":
+                return response.arrayBuffer() as Promise<T>;
+            default:
+                throw new Error(`Unsupported response type: ${options.responseType}`);
+        }
+    }
+
     private async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
         const { timeout = 5000, ...fetchOptions } = options;
 
@@ -58,13 +74,19 @@ class Fetchy {
             });
 
             if (!response.ok) {
-                const error = (await response.json()) as ErrorResponse;
-                throw new Error(error.message || "An error occurred while fetching the data.", {
+                let errorMessage = "An error occurred while fetching the data.";
+
+                if (options.responseType === "json") {
+                    const error = (await response.json()) as ErrorResponse;
+                    errorMessage = error.message || errorMessage;
+                }
+
+                throw new Error(errorMessage, {
                     cause: { response },
                 });
             }
 
-            return response.json() as Promise<T>;
+            return this.parseResponse<T>(response, options);
         } finally {
             clearTimeout(timeoutId);
         }
