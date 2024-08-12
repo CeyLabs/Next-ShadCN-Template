@@ -33,6 +33,7 @@
 
 interface FetchOptions extends RequestInit {
     headers?: Record<string, string>;
+    timeout?: number;
 }
 
 interface ErrorResponse {
@@ -41,24 +42,32 @@ interface ErrorResponse {
 
 class Fetchy {
     private async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
-        const { ...fetchOptions } = options;
+        const { timeout = 5000, ...fetchOptions } = options;
 
-        const response = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-                ...fetchOptions.headers,
-            },
-            ...fetchOptions,
-        });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-        if (!response.ok) {
-            const error = (await response.json()) as ErrorResponse;
-            throw new Error(error.message || "An error occurred while fetching the data.", {
-                cause: { response },
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    ...fetchOptions.headers,
+                },
+                signal: controller.signal,
+                ...fetchOptions,
             });
-        }
 
-        return response.json() as Promise<T>;
+            if (!response.ok) {
+                const error = (await response.json()) as ErrorResponse;
+                throw new Error(error.message || "An error occurred while fetching the data.", {
+                    cause: { response },
+                });
+            }
+
+            return response.json() as Promise<T>;
+        } finally {
+            clearTimeout(timeoutId);
+        }
     }
 
     get<T>(url: string, options: FetchOptions = {}): Promise<T> {
