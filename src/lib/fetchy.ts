@@ -100,10 +100,6 @@ class Fetchy {
         }
     }
 
-    async<T>(url: string, options: FetchOptions = {}): Promise<T> {
-        return this.get<T>(url, options);
-    }
-
     get<T>(url: string, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, { ...options, method: "GET" });
     }
