@@ -46,6 +46,7 @@ interface FetchOptions extends RequestInit {
     timeout?: number;
     responseType?: "json" | "text" | "blob" | "arrayBuffer";
     retries?: number;
+    retryDelay?: number;
 }
 
 interface ErrorResponse {
@@ -68,8 +69,12 @@ class Fetchy {
         }
     }
 
+    private async delay(ms: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
     private async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
-        const { timeout = 5000, retries = 1, ...fetchOptions } = options;
+        const { timeout = 5000, retries = 1, retryDelay = 1000, ...fetchOptions } = options;
 
         const executeRequest = async (attemptsLeft: number): Promise<T> => {
             const controller = new AbortController();
@@ -102,6 +107,7 @@ class Fetchy {
             } catch (error) {
                 if (attemptsLeft > 0) {
                     console.warn(`Request failed. Retrying... (${attemptsLeft} attempts left)`);
+                    await this.delay(retryDelay);
                     return executeRequest(attemptsLeft - 1);
                 }
                 throw error;
