@@ -104,7 +104,7 @@ class Fetchy {
         return this.request<T>(url, { ...options, method: "GET" });
     }
 
-    post<T, B = unknown>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
+    post<T, B>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, {
             ...options,
             method: "POST",
@@ -112,7 +112,7 @@ class Fetchy {
         });
     }
 
-    put<T, B = unknown>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
+    put<T, B>(url: string, body: B, options: FetchOptions = {}): Promise<T> {
         return this.request<T>(url, {
             ...options,
             method: "PUT",
