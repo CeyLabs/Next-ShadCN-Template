@@ -1,5 +1,5 @@
 /**
- * fetchy is a utility for making HTTP requests with built-in error handling.
+ * fetchy is a utility for making HTTP requests with built-in error handling and retry logic.
  * It provides methods for common HTTP methods: GET, POST, PUT, and DELETE.
  * It can be used as a function for GET requests or as an object with method properties.
  *
@@ -10,6 +10,7 @@
  * - Returns a Promise, allowing use of .then(), .catch(), and .finally().
  * - Supports TypeScript generics for type-safe responses and request bodies.
  * - Implements request timeout with AbortController.
+ * - Implements retry logic with a default retry count of 1.
  *
  * Usage:
  * - `fetchy<T>(url, options)`: Sends a GET request (shorthand).
@@ -22,6 +23,7 @@
  * - You can pass additional fetch options (headers, etc.) through the `options` parameter.
  * - Use `timeout` in `options` to set a custom timeout (default is 5000ms).
  * - Use `responseType` in `options` to specify the response type (default is "json").
+ * - Use `retries` in `options` to set the number of retry attempts (default is 1).
  *
  * Example:
  * fetchy<UserData>('https://api.example.com/user')
@@ -29,7 +31,7 @@
  *   .catch(error => console.error(error));
  *
  * // Or using the method syntax
- * fetchy.post<ResponseData, RequestBody>('https://api.example.com/user', { name: 'John' })
+ * fetchy.post<ResponseData, RequestBody>('https://api.example.com/user', { name: 'John' }, { retries: 2 })
  *   .then(data => console.log(data))
  *   .catch(error => console.error(error));
  *
@@ -43,6 +45,7 @@ interface FetchOptions extends RequestInit {
     headers?: Record<string, string>;
     timeout?: number;
     responseType?: "json" | "text" | "blob" | "arrayBuffer";
+    retries?: number;
 }
 
 interface ErrorResponse {
@@ -66,38 +69,48 @@ class Fetchy {
     }
 
     private async request<T>(url: string, options: FetchOptions = {}): Promise<T> {
-        const { timeout = 5000, ...fetchOptions } = options;
+        const { timeout = 5000, retries = 1, ...fetchOptions } = options;
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        const executeRequest = async (attemptsLeft: number): Promise<T> => {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    "Content-Type": "application/json",
-                    ...fetchOptions.headers,
-                },
-                signal: controller.signal,
-                ...fetchOptions,
-            });
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...fetchOptions.headers,
+                    },
+                    signal: controller.signal,
+                    ...fetchOptions,
+                });
 
-            if (!response.ok) {
-                let errorMessage = "An error occurred while fetching the data.";
+                if (!response.ok) {
+                    let errorMessage = "An error occurred while fetching the data.";
 
-                if (options.responseType === "json") {
-                    const error = (await response.json()) as ErrorResponse;
-                    errorMessage = error.message || errorMessage;
+                    if (options.responseType === "json") {
+                        const error = (await response.json()) as ErrorResponse;
+                        errorMessage = error.message || errorMessage;
+                    }
+
+                    throw new Error(errorMessage, {
+                        cause: { response },
+                    });
                 }
 
-                throw new Error(errorMessage, {
-                    cause: { response },
-                });
+                return this.parseResponse<T>(response, options);
+            } catch (error) {
+                if (attemptsLeft > 0) {
+                    console.warn(`Request failed. Retrying... (${attemptsLeft} attempts left)`);
+                    return executeRequest(attemptsLeft - 1);
+                }
+                throw error;
+            } finally {
+                clearTimeout(timeoutId);
             }
+        };
 
-            return this.parseResponse<T>(response, options);
-        } finally {
-            clearTimeout(timeoutId);
-        }
+        return executeRequest(retries);
     }
 
     get<T>(url: string, options: FetchOptions = {}): Promise<T> {
