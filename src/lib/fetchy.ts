@@ -110,7 +110,8 @@ class Fetchy {
                     await this.delay(retryDelay);
                     return executeRequest(attemptsLeft - 1);
                 }
-                throw error;
+                console.error("Failed to fetch data:", error);
+                throw new Error("Failed to fetch data.", { cause: error });
             } finally {
                 clearTimeout(timeoutId);
             }
