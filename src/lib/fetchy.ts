@@ -149,9 +149,9 @@ const fetchy = new Fetchy();
 
 export default Object.assign((url: string, options?: FetchOptions) => fetchy.get(url, options), {
     get: <T>(url: string, options?: FetchOptions) => fetchy.get<T>(url, options),
-    post: <T, B = unknown>(url: string, body: B, options?: FetchOptions) =>
+    post: <T, B>(url: string, body: B, options?: FetchOptions) =>
         fetchy.post<T, B>(url, body, options),
-    put: <T, B = unknown>(url: string, body: B, options?: FetchOptions) =>
+    put: <T, B>(url: string, body: B, options?: FetchOptions) =>
         fetchy.put<T, B>(url, body, options),
     delete: <T>(url: string, options?: FetchOptions) => fetchy.delete<T>(url, options),
 });
